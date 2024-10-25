@@ -27,7 +27,7 @@ create table Profile (
 create table AuthData (
     id SERIAL primary key,
     profile_id int,
-    profilename varchar(255),
+    username varchar(255),
     password varchar(255),
     enabled boolean default true,
     foreign key (profile_id) references Profile(id)
