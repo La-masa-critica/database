@@ -7,7 +7,7 @@ create table Role (
 
 create table Permission (
     id SERIAL primary key,
-    description varchar(255)
+    name varchar(255)
 );
 
 create table Role_Permission (
@@ -18,27 +18,36 @@ create table Role_Permission (
     foreign key (permission_id) references Permission(id)
 );
 
-create table "User" (
+create table Profile (
     id SERIAL primary key,
     name varchar(255),
     phone varchar(255)
 );
 
-create table Credential (
+create table AuthData (
     id SERIAL primary key,
-    user_id int,
-    role_id int,
-    username varchar(255),
+    profile_id int,
+    profilename varchar(255),
     password varchar(255),
-    foreign key (user_id) references "User"(id),
+    enabled boolean default true,
+    foreign key (profile_id) references Profile(id)
+);
+
+create table AuthData_Role (
+    authdata_id int,
+    role_id int,
+    primary key (authdata_id, role_id),
+    foreign key (authdata_id) references AuthData(id),
     foreign key (role_id) references Role(id)
 );
 
-create table Product (
+
+create table Item (
     id SERIAL primary key,
     name varchar(255),
-    price decimal(10, 2),
-    stock int
+    price decimal(10, 2) default 0,
+    stock int default 0,
+    enabled boolean default true
 );
 
 create table Category (
@@ -46,48 +55,48 @@ create table Category (
     name varchar(255)
 );
 
-create table Product_Category (
+create table Item_Category (
     category_id int,
-    product_id int,
-    primary key (category_id, product_id),
+    item_id int,
+    primary key (category_id, item_id),
     foreign key (category_id) references Category(id),
-    foreign key (product_id) references Product(id)
+    foreign key (item_id) references Item(id)
 );
 
-create table Sell (
+create table Sale (
     id SERIAL primary key,
-    user_id int,
+    profile_id int,
     date timestamp,
     total decimal(10, 2),
     status varchar(255),
     comments varchar(255),
-    foreign key (user_id) references "User"(id)
+    foreign key (profile_id) references Profile(id)
 );
 
-create table Sell_details (
-    sell_id int,
-    product_id int,
-    amount int,
-    unit_price decimal(10, 2),
-    primary key (sell_id, product_id),
-    foreign key (sell_id) references Sell(id),
-    foreign key (product_id) references Product(id)
+create table Sale_details (
+    sale_id int,
+    item_id int,
+    quantity int,
+    price decimal(10, 2),
+    primary key (sale_id, item_id),
+    foreign key (sale_id) references Sale(id),
+    foreign key (item_id) references Item(id)
 );
 
-create table Shopping_car (
+create table Cart (
     id SERIAL primary key,
-    user_id int,
-    status varchar(255),
-    foreign key (user_id) references "User"(id)
+    profile_id int,
+    enabled boolean default true,
+    foreign key (profile_id) references Profile(id)
 );
 
 
-create table Shopping_car_details (
-    shopping_car_id int,
-    product_id int,
-    amount int,
-    primary key (shopping_car_id, product_id),
-    foreign key (shopping_car_id) references Shopping_car(id),
-    foreign key (product_id) references Product(id)
+create table Cart_Item (
+    cart_id int,
+    item_id int,
+    quantity int,
+    primary key (cart_id, item_id),
+    foreign key (cart_id) references Cart(id),
+    foreign key (item_id) references Item(id)
 );
 
